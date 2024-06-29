@@ -10,7 +10,7 @@ const useSocket = () => {
       const skt = io("http://localhost:8080");
       setSocket(skt);
     }
-  }, []);
+  }, [socket]);
 
   return {
     socket,

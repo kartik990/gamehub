@@ -1,8 +1,11 @@
-import { BoardType, MessageType } from "@/types/chess";
+import { BoardType, MessageType, MoveType } from "@/types/chess";
 import React, { createContext, Dispatch, ReactNode, useReducer } from "react";
 
 type Action =
-  | { type: "updateBoard"; payload: { board: BoardType; turn: "w" | "b" } }
+  | {
+      type: "updateBoard";
+      payload: { board: BoardType; turn: "w" | "b"; latestMove: MoveType };
+    }
   | {
       type: "newGame";
       payload: { board: BoardType; col: "w" | "b"; gameId: string };
@@ -15,7 +18,7 @@ interface State {
   messages: MessageType[];
   myCol: "w" | "b" | "";
   turn: "w" | "b" | "";
-  moves: { from: ""; to: ""; type: ""; col: "" }[];
+  moves: MoveType[];
 }
 
 const initialState: State = {
@@ -28,12 +31,15 @@ const initialState: State = {
 };
 
 const reducer = (state: State, action: Action): State => {
+  console.log("reducer used");
+
   switch (action.type) {
     case "updateBoard":
       return {
         ...state,
         board: action.payload.board,
         turn: action.payload.turn,
+        moves: state.moves.concat(action.payload.latestMove),
       };
     case "changeMessages":
       return { ...state, messages: [...state.messages, action.payload.newMsg] };

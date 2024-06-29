@@ -1,14 +1,7 @@
-import React, {
-  MutableRefObject,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Cell from "./Cell";
-import { BoardType } from "@/types/chess";
 import { Socket } from "socket.io-client";
 import { indexToPosition } from "@/utils/chess";
-import useSocket from "@/hooks/useSocket";
 import { ChessContext } from "@/context/chess";
 
 interface ChessBoardProps {
@@ -30,12 +23,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ socket }) => {
 
     if (turn != myCol) return;
 
-    if (move.from === "") {
+    if (move.from === "" || col == myCol) {
       setMove((prev) => ({ ...prev, from: pos }));
     } else {
-      // send move
       setMove((prev) => ({ ...prev, to: pos }));
-      // setTurn((prev) => (prev === "w" ? "w" : "b"));
     }
   };
 
@@ -46,6 +37,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ socket }) => {
     }
   }, [move, socket, gameId]);
 
+  const cols = "abcdefgh";
+
   return (
     <div
       className={`w-[480px] h-[480px] bg-slate-100 b grid grid-row-8 grid-cols-8
@@ -55,14 +48,35 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ socket }) => {
         board.map((row, i) =>
           row?.map((cell, j) => (
             <div
-              key={`${i}- ${j}`}
+              key={`${i}-${j}`}
               onClick={() => handleMove(i, j, cell?.color)}
+              className="relative"
             >
               <Cell
                 isInverted={isInverted}
                 isDarkCell={(i + j) % 2 === 1}
                 cell={cell}
               />
+              {j == 0 && !isInverted ? (
+                <div className="absolute top-1 left-[-12px] text-xs text-white">
+                  {8 - i}
+                </div>
+              ) : null}
+              {j == 7 && isInverted ? (
+                <div className="absolute bottom-1 right-[-12px] text-xs text-white  rotate-180">
+                  {8 - i}
+                </div>
+              ) : null}
+              {i == 7 && !isInverted ? (
+                <div className="absolute bottom-[-20px] right-2 text-xs text-white">
+                  {cols[j]}
+                </div>
+              ) : null}
+              {i == 0 && isInverted ? (
+                <div className="absolute left-2 top-[-20px]  text-xs text-white rotate-180">
+                  {cols[j]}
+                </div>
+              ) : null}
             </div>
           ))
         )

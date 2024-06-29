@@ -19,64 +19,65 @@ interface CellProps {
   isInverted: boolean;
 }
 
-const Cell: React.FC<CellProps> = ({ isDarkCell, cell, isInverted }) => {
-  function getPiece() {
-    if (!cell) return null;
+export function getPiece(type: string | undefined, color: string | undefined) {
+  if (!color || !type) return null;
 
-    const key = `${cell.color}${cell.type}`;
-    let img = null;
+  const key = `${color}${type}`;
+  let img = null;
 
-    switch (key) {
-      case "bk":
-        img = pieceBk;
-        break;
-      case "bq":
-        img = pieceBq;
-        break;
-      case "br":
-        img = pieceBr;
-        break;
-      case "bb":
-        img = pieceBb;
-        break;
-      case "bn":
-        img = pieceBn;
-        break;
-      case "bp":
-        img = pieceBp;
-        break;
-      case "wk":
-        img = pieceWk;
-        break;
-      case "wq":
-        img = pieceWq;
-        break;
-      case "wr":
-        img = pieceWr;
-        break;
-      case "wb":
-        img = pieceWb;
-        break;
-      case "wn":
-        img = pieceWn;
-        break;
-      case "wp":
-        img = pieceWp;
-        break;
-      default:
-        img = null;
-    }
-
-    return img ? <Image width={48} height={48} src={img} alt="piece" /> : null;
+  switch (key) {
+    case "bk":
+      img = pieceBk;
+      break;
+    case "bq":
+      img = pieceBq;
+      break;
+    case "br":
+      img = pieceBr;
+      break;
+    case "bb":
+      img = pieceBb;
+      break;
+    case "bn":
+      img = pieceBn;
+      break;
+    case "bp":
+      img = pieceBp;
+      break;
+    case "wk":
+      img = pieceWk;
+      break;
+    case "wq":
+      img = pieceWq;
+      break;
+    case "wr":
+      img = pieceWr;
+      break;
+    case "wb":
+      img = pieceWb;
+      break;
+    case "wn":
+      img = pieceWn;
+      break;
+    case "wp":
+      img = pieceWp;
+      break;
+    default:
+      img = null;
   }
 
+  return img;
+}
+
+const Cell: React.FC<CellProps> = ({ isDarkCell, cell, isInverted }) => {
+  const img = getPiece(cell?.type, cell?.color);
   return (
     <div
       className={`flex justify-center items-center text-base border-solid border-2 hover:border-slate-700 relative w-[60px] h-[60px] ${
         isInverted ? "rotate-180" : ""
       }  ${isDarkCell ? "bg-col-1 border-col-1" : ""}`}
     >
-      {getPiece()}
+      {img ? <Image width={48} height={48} src={img} alt="piece" /> : null}
     </div>
   );
 };

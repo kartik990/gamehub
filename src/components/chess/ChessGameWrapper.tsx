@@ -1,18 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ChessBoard from "./ChessBoard";
 import MiddleSection from "./MiddleSection";
 import Messenger from "./Messenger";
 import useSocket from "@/hooks/useSocket";
 import { ChessContext } from "@/context/chess";
 import { chessEvents } from "@/constants/chessEvents";
+import { toast } from "react-toastify";
 
 interface ChessGameWrapperProps {}
 
 const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
   const { socket } = useSocket();
   const [showModel, setShowModel] = useState<boolean>(true);
+  const ref = useRef(0);
 
-  const { dispatch } = useContext(ChessContext);
+  const {
+    state: { myCol },
+    dispatch,
+  } = useContext(ChessContext);
 
   const handleClick = () => {
     socket?.emit(chessEvents.INIT_GAME);
@@ -26,10 +31,31 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
       dispatch({ type: "newGame", payload: { gameId, board, col: color } });
     });
 
-    socket.on(chessEvents.UPDATE_BOARD, (board, turn) => {
-      dispatch({ type: "updateBoard", payload: { board, turn } });
+    socket.on(chessEvents.UPDATE_BOARD, (board, turn, latestMove) => {
+      dispatch({
+        type: "updateBoard",
+        payload: { board, turn, latestMove },
+      });
     });
-  }, [socket, dispatch]);
+
+    socket.on(
+      chessEvents.WARNING_MSG,
+      (message: string, fr: "w" | "b" | "both") => {
+        if (fr == myCol || fr == "both") {
+          toast.info(message);
+        }
+      }
+    );
+
+    // socket.on(
+    //   chessEvents.CRITICAL_MSG,
+    //   (message: string, fr: "w" | "b" | "both") => {
+    //     if(message=="check-mate"){
+
+    //     }
+    //   }
+    // );
+  }, [socket, dispatch, myCol]);
 
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-col-4">

@@ -11,3 +11,5 @@ export type MessageType = {
   content: string;
   timeStamp: Date;
 };
+
+export type MoveType = { from: string; to: string; col: string; piece: string };
