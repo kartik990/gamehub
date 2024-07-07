@@ -1,4 +1,22 @@
+import QuitModel from "@/components/molecule/QuitModel";
+import {
+  AltRouteRounded,
+  ChevronLeft,
+  ChevronRight,
+  EastOutlined,
+  ExpandLessRounded,
+  ExpandMoreRounded,
+  Logout,
+  NorthOutlined,
+  South,
+  SouthAmerica,
+  SouthEast,
+  SouthOutlined,
+  SpaceBar,
+  WestOutlined,
+} from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
+import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
 
 interface SnakeSegment {
   x: number;
@@ -8,7 +26,10 @@ interface SnakeSegment {
 const SnakeGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   let animationFrameId: number;
-  let point = 0;
+  const [point, setPoint] = useState(0);
+  const [pause, setPause] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [quitModel, setQuitModel] = useState(false);
 
   useEffect(() => {
     if (!canvasRef?.current) return;
@@ -17,8 +38,8 @@ const SnakeGame: React.FC = () => {
     const context = canvas.getContext("2d")!;
 
     // canvas dimensions
-    canvas.width = 800;
-    canvas.height = 500;
+    canvas.width = 650;
+    canvas.height = 420;
 
     const gridSize = 10;
     let dx = 0;
@@ -36,7 +57,6 @@ const SnakeGame: React.FC = () => {
     };
 
     let frame = 0;
-    let point = 0;
 
     const paintCanvas = () => {
       if (frame < 5) {
@@ -48,7 +68,7 @@ const SnakeGame: React.FC = () => {
       if (context) {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        context.fillStyle = "red";
+        context.fillStyle = "#827397";
         context.fillRect(
           food.x * gridSize,
           food.y * gridSize,
@@ -78,6 +98,8 @@ const SnakeGame: React.FC = () => {
           snake[0].y > canvas.height
         ) {
           console.log("game over");
+          setGameOver(true);
+          window.cancelAnimationFrame(animationFrameId);
         }
 
         if (ate) {
@@ -87,7 +109,7 @@ const SnakeGame: React.FC = () => {
             ...snake.slice(1),
           ];
 
-          point++;
+          setPoint((prev) => prev + 1);
           console.log(point);
         }
 
@@ -100,7 +122,7 @@ const SnakeGame: React.FC = () => {
           }
         }
 
-        context.fillStyle = "green";
+        context.fillStyle = "#4D4C7D";
         snake.forEach((segment) => {
           context.fillRect(segment.x, segment.y, gridSize, gridSize);
         });
@@ -109,6 +131,9 @@ const SnakeGame: React.FC = () => {
 
     const renderAnimation = () => {
       paintCanvas();
+      if (gameOver) {
+        return;
+      }
       animationFrameId = requestAnimationFrame(renderAnimation);
     };
 
@@ -143,6 +168,7 @@ const SnakeGame: React.FC = () => {
         case "Space":
           dx = 0;
           dy = 0;
+          setPause(true);
           break;
       }
     };
@@ -163,9 +189,49 @@ const SnakeGame: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-screen h-screen  flex flex-col gap-5 justify-center items-center bg-slate-500">
-      <h1>Welcome to the Snake Game {point}</h1>
-      <canvas ref={canvasRef} className="bg-slate-100 " />
+    <div className="w-screen h-screen  flex gap-5 justify-center items-center bg-col-4">
+      <div>
+        <div className="font-bold text-3xl text-white mb-4">
+          Welcome to The Snake Game
+        </div>
+        <canvas
+          ref={canvasRef}
+          className="bg-slate-300 border-col-1 border-[8px]"
+        />
+      </div>
+      <div className="w-[280px] h-[435px] mt-[52px] bg-slate-300 flex flex-col items-center justify-between">
+        <div className="bg-col-1 w-full font-extrabold text-xl py-3 flex items-center justify-center">
+          Points :<span className="mx-2 text-2xl">{point}</span>
+        </div>
+        <div className="px-3 text-center">
+          Try to collect as many points as possible without colliding snake with
+          the wall or his own body.
+        </div>
+        <div className="flex flex-col justify-center items-center px-5">
+          <div className="text-center mb-4">
+            Use Arrow Keys to move and change direction
+          </div>
+          <div className="mb-2">
+            <ExpandLessRounded className="bg-slate-400" />
+          </div>
+          <div className="flex gap-2">
+            <ChevronLeft className="bg-slate-400" />
+            <ExpandMoreRounded className="bg-slate-400" />
+            <ChevronRight className="bg-slate-400" />
+          </div>
+        </div>
+        <div>
+          <span>Press Space to pause</span>
+          <SpaceBar className="bg-slate-400 ml-3" />
+        </div>
+        <div
+          className="py-2 bg-col-1 w-full text-center cursor-pointer hover:bg-slate-400"
+          onClick={() => setQuitModel(true)}
+        >
+          Quit to Home <Logout />
+        </div>
+      </div>
+      <QuitModel show={quitModel} setModel={setQuitModel} />
     </div>
   );
 };

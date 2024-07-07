@@ -4,7 +4,12 @@ import React, { createContext, Dispatch, ReactNode, useReducer } from "react";
 type Action =
   | {
       type: "updateBoard";
-      payload: { board: BoardType; turn: "w" | "b"; latestMove: MoveType };
+      payload: {
+        board: BoardType;
+        turn: "w" | "b";
+        latestMove: MoveType;
+        isCheck: boolean;
+      };
     }
   | {
       type: "newGame";
@@ -19,6 +24,7 @@ interface State {
   myCol: "w" | "b" | "";
   turn: "w" | "b" | "";
   moves: MoveType[];
+  inCheck: boolean;
 }
 
 const initialState: State = {
@@ -26,13 +32,12 @@ const initialState: State = {
   board: null,
   myCol: "",
   turn: "w",
+  inCheck: false,
   moves: [],
   messages: [],
 };
 
 const reducer = (state: State, action: Action): State => {
-  console.log("reducer used");
-
   switch (action.type) {
     case "updateBoard":
       return {
@@ -40,6 +45,7 @@ const reducer = (state: State, action: Action): State => {
         board: action.payload.board,
         turn: action.payload.turn,
         moves: state.moves.concat(action.payload.latestMove),
+        inCheck: action.payload.isCheck,
       };
     case "changeMessages":
       return { ...state, messages: [...state.messages, action.payload.newMsg] };

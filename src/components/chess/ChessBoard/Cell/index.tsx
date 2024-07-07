@@ -12,11 +12,14 @@ import pieceWb from "@/assets/pieces/Chess_blt45.svg";
 import pieceWp from "@/assets/pieces/Chess_plt45.svg";
 import Image from "next/image";
 import { CellType } from "@/types/chess";
+import { useContext } from "react";
+import { ChessContext } from "@/context/chess";
 
 interface CellProps {
   isDarkCell: boolean;
   cell: CellType | null;
   isInverted: boolean;
+  selected: boolean;
 }
 
 export function getPiece(type: string | undefined, color: string | undefined) {
@@ -69,13 +72,28 @@ export function getPiece(type: string | undefined, color: string | undefined) {
   return img;
 }
 
-const Cell: React.FC<CellProps> = ({ isDarkCell, cell, isInverted }) => {
+const Cell: React.FC<CellProps> = ({
+  isDarkCell,
+  cell,
+  isInverted,
+  selected,
+}) => {
+  const {
+    state: { inCheck, turn },
+  } = useContext(ChessContext);
+
   const img = getPiece(cell?.type, cell?.color);
+  const check = inCheck && turn == cell?.color && cell?.type == "k";
+
   return (
     <div
       className={`flex justify-center items-center text-base border-solid border-2 hover:border-slate-700 relative w-[60px] h-[60px] ${
         isInverted ? "rotate-180" : ""
-      }  ${isDarkCell ? "bg-col-1 border-col-1" : ""}`}
+      }  ${isDarkCell ? "bg-col-1 border-col-1" : ""} ${
+        check ? "bg-red-400 border-none" : ""
+      }
+        ${selected ? "border-4 border-b-8 border-slate-700" : ""}
+        `}
     >
       {img ? <Image width={48} height={48} src={img} alt="piece" /> : null}
     </div>

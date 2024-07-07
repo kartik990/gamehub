@@ -31,18 +31,23 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
       dispatch({ type: "newGame", payload: { gameId, board, col: color } });
     });
 
-    socket.on(chessEvents.UPDATE_BOARD, (board, turn, latestMove) => {
-      dispatch({
-        type: "updateBoard",
-        payload: { board, turn, latestMove },
-      });
-    });
+    socket.on(
+      chessEvents.UPDATE_BOARD,
+      ({ board, turn, latestMove, isCheck }) => {
+        dispatch({
+          type: "updateBoard",
+          payload: { board, turn, latestMove, isCheck },
+        });
+      }
+    );
 
     socket.on(
       chessEvents.WARNING_MSG,
       (message: string, fr: "w" | "b" | "both") => {
+        console.log(fr);
+
         if (fr == myCol || fr == "both") {
-          toast.info(message);
+          toast.warn(message);
         }
       }
     );
