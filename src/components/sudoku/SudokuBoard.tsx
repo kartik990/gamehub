@@ -18,13 +18,25 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, setBoard }) => {
 
   const handleSelect = (r: number, c: number) => {
     const newBoard = deepCopy(board) as string[][];
-    newBoard[r][c] = "7";
+
     setSelected({ r, c });
-    setBoard(newBoard);
+    // setBoard(newBoard);
     console.log(selected);
   };
 
-  useEffect(() => {}, [selected]);
+  useEffect(() => {
+    if (selected == null) return;
+
+    window.addEventListener("keydown", (e) => {
+      if (e?.key) {
+        console.log(e);
+        const newBoard = deepCopy(board) as string[][];
+        const { r, c } = selected;
+        newBoard[r][c] = e.key;
+        setBoard(newBoard);
+      }
+    });
+  }, [selected, board, setBoard]);
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full relative">
@@ -41,6 +53,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, setBoard }) => {
                 value={val}
                 r={r}
                 c={c}
+                selected={selected}
               />
             </>
           ));

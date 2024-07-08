@@ -38,6 +38,7 @@ const Sudoku = () => {
       console.log(err);
     }
   };
+  console.log(board);
 
   useEffect(() => {
     func();

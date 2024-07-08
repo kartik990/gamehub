@@ -1,22 +1,13 @@
 import QuitModel from "@/components/molecule/QuitModel";
 import {
-  AltRouteRounded,
   ChevronLeft,
   ChevronRight,
-  EastOutlined,
   ExpandLessRounded,
   ExpandMoreRounded,
   Logout,
-  NorthOutlined,
-  South,
-  SouthAmerica,
-  SouthEast,
-  SouthOutlined,
   SpaceBar,
-  WestOutlined,
 } from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
-import VideogameAssetIcon from "@mui/icons-material/VideogameAsset";
 
 interface SnakeSegment {
   x: number;
@@ -25,9 +16,9 @@ interface SnakeSegment {
 
 const SnakeGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const pause = useRef<boolean>(false);
   let animationFrameId: number;
   const [point, setPoint] = useState(0);
-  const [pause, setPause] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [quitModel, setQuitModel] = useState(false);
 
@@ -59,6 +50,8 @@ const SnakeGame: React.FC = () => {
     let frame = 0;
 
     const paintCanvas = () => {
+      if (pause.current) return;
+
       if (frame < 5) {
         frame++;
         return;
@@ -97,10 +90,20 @@ const SnakeGame: React.FC = () => {
           0 > snake[0].y ||
           snake[0].y > canvas.height
         ) {
-          console.log("game over");
           setGameOver(true);
-          window.cancelAnimationFrame(animationFrameId);
         }
+
+        snake.forEach((segment, idx) => {
+          if (
+            idx > 3 &&
+            segment.x < snake[0].x + 5 &&
+            snake[0].x + 5 < segment.x + gridSize &&
+            segment.y < snake[0].y + 5 &&
+            snake[0].y + 5 < segment.y + gridSize
+          ) {
+            setGameOver(true);
+          }
+        });
 
         if (ate) {
           snake = [
@@ -108,9 +111,7 @@ const SnakeGame: React.FC = () => {
             { x: snake[0].x, y: snake[0].y },
             ...snake.slice(1),
           ];
-
           setPoint((prev) => prev + 1);
-          console.log(point);
         }
 
         snake[0].x = snake[0].x + dx;
@@ -131,9 +132,6 @@ const SnakeGame: React.FC = () => {
 
     const renderAnimation = () => {
       paintCanvas();
-      if (gameOver) {
-        return;
-      }
       animationFrameId = requestAnimationFrame(renderAnimation);
     };
 
@@ -166,9 +164,13 @@ const SnakeGame: React.FC = () => {
           }
           break;
         case "Space":
-          dx = 0;
-          dy = 0;
-          setPause(true);
+          if (pause.current) {
+            pause.current = false;
+          } else {
+            // dx = 0;
+            // dy = 0;
+            pause.current = true;
+          }
           break;
       }
     };
@@ -187,6 +189,12 @@ const SnakeGame: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (gameOver) {
+      pause.current = true;
+    }
+  }, [gameOver]);
 
   return (
     <div className="w-screen h-screen  flex gap-5 justify-center items-center bg-col-4">
