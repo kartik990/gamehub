@@ -1,8 +1,6 @@
 import React from "react";
 
-interface FlappyBirdProps {}
-
-const FlappyBird: React.FC<FlappyBirdProps> = () => {
+const FlappyBird = () => {
   return <div>Coming soon.....</div>;
 };
 
