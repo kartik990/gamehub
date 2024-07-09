@@ -1,4 +1,9 @@
-export function isSafe(board: string[][], r: number, c: number, val: string) {
+export function isSafe(
+  board: string[][],
+  r: number,
+  c: number,
+  val: string
+): boolean {
   for (let i = 0; i < 9; i++) {
     if (board[i][c] === val || board[r][i] === val) {
       return false;

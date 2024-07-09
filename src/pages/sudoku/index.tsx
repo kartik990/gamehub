@@ -24,6 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Sudoku = () => {
   const [board, setBoard] = useState<string[][] | null>(null);
+  const [solution, setSolution] = useState<string[][] | null>(null);
 
   // https://sudoku-api.vercel.app/api/dosuku?query={newboard(limit:5){grids{value,solution,difficulty},results,message}}
 
@@ -38,6 +39,7 @@ const Sudoku = () => {
       const solvedBoard = data.newboard.grids[0].solution;
       if (res.ok) {
         setBoard(fetchedBoard);
+        setSolution(solvedBoard);
       } else {
         toast.warning("cannot connect");
       }
@@ -54,8 +56,12 @@ const Sudoku = () => {
     <div className="flex items-center justify-center w-screen h-screen bg-col-4">
       <div className="w-[100%] h-[80%] flex justify-between flex-col md:flex-row md:w-[80%] ">
         <div className="w-[68%] bg-col-1 flex justify-center items-center">
-          {board ? (
-            <SudokuBoard board={board} setBoard={setBoard} />
+          {board && solution ? (
+            <SudokuBoard
+              board={board}
+              setBoard={setBoard}
+              solution={solution}
+            />
           ) : (
             `Loading...`
           )}
