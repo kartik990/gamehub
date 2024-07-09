@@ -7,6 +7,7 @@ import {
   Logout,
   SpaceBar,
 } from "@mui/icons-material";
+import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
 interface SnakeSegment {
@@ -17,7 +18,7 @@ interface SnakeSegment {
 const SnakeGame: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pause = useRef<boolean>(false);
-  let animationFrameId: number;
+  const animationFrameId = useRef<number>();
   const [point, setPoint] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [quitModel, setQuitModel] = useState(false);
@@ -132,7 +133,7 @@ const SnakeGame: React.FC = () => {
 
     const renderAnimation = () => {
       paintCanvas();
-      animationFrameId = requestAnimationFrame(renderAnimation);
+      animationFrameId.current = requestAnimationFrame(renderAnimation);
     };
 
     renderAnimation();
@@ -140,24 +141,36 @@ const SnakeGame: React.FC = () => {
     const handleKeyDown = (event: any) => {
       switch (event.code) {
         case "ArrowUp":
+          if (pause.current) {
+            pause.current = false;
+          }
           if (dy == 0) {
             dx = 0;
             dy = -gridSize;
           }
           break;
         case "ArrowDown":
+          if (pause.current) {
+            pause.current = false;
+          }
           if (dy == 0) {
             dx = 0;
             dy = gridSize;
           }
           break;
         case "ArrowLeft":
+          if (pause.current) {
+            pause.current = false;
+          }
           if (dx == 0) {
             dx = -gridSize;
             dy = 0;
           }
           break;
         case "ArrowRight":
+          if (pause.current) {
+            pause.current = false;
+          }
           if (dx == 0) {
             dx = gridSize;
             dy = 0;
@@ -180,7 +193,8 @@ const SnakeGame: React.FC = () => {
     // Cleanup function to remove any event listeners or other resources
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.cancelAnimationFrame(animationFrameId);
+      if (animationFrameId.current)
+        window.cancelAnimationFrame(animationFrameId.current);
       if (canvas) {
         const context = canvas.getContext("2d");
         if (context) {
@@ -188,13 +202,19 @@ const SnakeGame: React.FC = () => {
         }
       }
     };
-  }, []);
+  }, [gameOver]);
 
   useEffect(() => {
     if (gameOver) {
       pause.current = true;
     }
   }, [gameOver]);
+
+  const handleRestart = () => {
+    pause.current = false;
+    setGameOver(false);
+    setPoint(0);
+  };
 
   return (
     <div className="w-screen h-screen  flex gap-5 justify-center items-center bg-col-4">
@@ -217,7 +237,7 @@ const SnakeGame: React.FC = () => {
         </div>
         <div className="flex flex-col justify-center items-center px-5">
           <div className="text-center mb-4">
-            Use Arrow Keys to move and change direction
+            Use Arrow Keys to start and change direction
           </div>
           <div className="mb-2">
             <ExpandLessRounded className="bg-slate-400" />
@@ -228,17 +248,46 @@ const SnakeGame: React.FC = () => {
             <ChevronRight className="bg-slate-400" />
           </div>
         </div>
-        <div>
-          <span>Press Space to pause</span>
+        <div className="mx-4 text-center">
+          <span>Press Space bar to pause / unpause game</span>
           <SpaceBar className="bg-slate-400 ml-3" />
         </div>
         <div
           className="py-2 bg-col-1 w-full text-center cursor-pointer hover:bg-slate-400"
-          onClick={() => setQuitModel(true)}
+          onClick={() => {
+            setQuitModel(true);
+            pause.current = true;
+          }}
         >
           Quit to Home <Logout />
         </div>
       </div>
+      {gameOver && (
+        <div
+          className="w-screen h-screen absolute top-0 left-0 bg-slate-300 opacity-70 flex
+       flex-col justify-center items-center "
+        >
+          <div className="text-5xl font-extrabold text-col-4 mb-4">
+            Game Over
+          </div>
+          <div className="bg-col-1 w-full font-extrabold text-slate-100 text-2xl py-2 flex items-center justify-center">
+            Final Points :<span className="mx-2 ">{point}</span>
+          </div>
+          <div>
+            <div className="mt-4 flex gap-6 text-col-4 text-xl">
+              <div
+                className="hover:scale-110 cursor-pointer"
+                onClick={handleRestart}
+              >
+                Restart
+              </div>
+              <Link href="/" className="hover:scale-110">
+                Quit
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
       <QuitModel show={quitModel} setModel={setQuitModel} />
     </div>
   );
