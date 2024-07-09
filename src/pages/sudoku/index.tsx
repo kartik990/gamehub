@@ -8,6 +8,9 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import Table from "@/components/sudoku/Table";
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // undo and redo
 // reset board
@@ -21,24 +24,27 @@ import Table from "@/components/sudoku/Table";
 
 const Sudoku = () => {
   const [board, setBoard] = useState<string[][] | null>(null);
-  const [difficulty, setDifficulty] = useState<string | null>(null);
 
   // https://sudoku-api.vercel.app/api/dosuku?query={newboard(limit:5){grids{value,solution,difficulty},results,message}}
 
   const func = async () => {
     try {
-      const res = await fetch("https://sudoku-api.vercel.app/api/dosuku");
+      const res = await fetch(
+        "https://sudoku-api.vercel.app/api/dosuku?query={newboard(limit:1){grids{value,solution,difficulty},results,message}}"
+      );
       const data = await res.json();
+      console.log(data);
       const fetchedBoard = data.newboard.grids[0].value;
-      const diff = data.newboard.grids[0].difficulty;
-      setDifficulty(diff);
-      console.log(diff);
-      setBoard(fetchedBoard);
+      const solvedBoard = data.newboard.grids[0].solution;
+      if (res.ok) {
+        setBoard(fetchedBoard);
+      } else {
+        toast.warning("cannot connect");
+      }
     } catch (err) {
       console.log(err);
     }
   };
-  console.log(board);
 
   useEffect(() => {
     func();
@@ -56,6 +62,12 @@ const Sudoku = () => {
         </div>
         <div className="w-[30%] p-5 bg-col-2 flex flex-col justify-between">
           <Timer />
+          <div>
+            {`A 9 x 9 square must be filled in with numbers from 1-9 with no
+            repeated numbers in each line, horizontally or vertically. To
+            challenge you more, there are 3 x 3 squares marked out in the grid,
+            and each of these squares can't have any repeat numbers either.`}
+          </div>
           {/* <div className="w=full text-lg font-bold flex gap-2 justify-between items-center">
             <div>
               Difficulty :{" "}
@@ -75,7 +87,7 @@ const Sudoku = () => {
           {/* <OptionsStrip /> */}
           {/* <Table /> */}
           <div className="w-full mx-auto grid grid-cols-2 grid-rows-2 gap-x-2 gap-y-2">
-            <Button>
+            {/* <Button>
               <UndoIcon /> Undo
             </Button>
             <Button>
@@ -88,10 +100,11 @@ const Sudoku = () => {
             <Button>
               <ReplayIcon />
               Reset
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

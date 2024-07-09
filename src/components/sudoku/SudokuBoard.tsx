@@ -3,6 +3,8 @@ import Cell from "./cell";
 import { deepCopy } from "@/utils";
 import Line from "./Line";
 import { Favorite, FavoriteRounded } from "@mui/icons-material";
+import { isSafe } from "@/utils/sudoku";
+import { toast } from "react-toastify";
 
 interface SudokuProps {
   board: string[][];
@@ -14,7 +16,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, setBoard }) => {
     null
   );
 
-  const [lifes, setLifes] = useState<number>(3);
+  const [lives, setLives] = useState<number>(2);
 
   const handleSelect = (r: number, c: number) => {
     const newBoard = deepCopy(board) as string[][];
@@ -24,16 +26,37 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, setBoard }) => {
     console.log(selected);
   };
 
+  const showLives = () => {
+    if (!lives || lives == 0) {
+      return null;
+    }
+
+    const activeLives = [...Array(lives)].map((_, idx) => (
+      <Favorite key={idx} className="text-red-400" />
+    ));
+    const deadLives = [...Array(4 - lives)].map((_, idx) => (
+      <Favorite key={idx} />
+    ));
+
+    return [activeLives, deadLives];
+  };
+
   useEffect(() => {
     if (selected == null) return;
 
     window.addEventListener("keydown", (e) => {
-      if (e?.key) {
-        console.log(e);
+      if (!e?.key) return;
+
+      const val = e.key;
+      const { r, c } = selected;
+
+      if (isSafe(board, r, c, val)) {
         const newBoard = deepCopy(board) as string[][];
-        const { r, c } = selected;
-        newBoard[r][c] = e.key;
+        newBoard[r][c] = val;
         setBoard(newBoard);
+      } else {
+        setLives((prev) => prev - 1);
+        toast.warn("invalid position");
       }
     });
   }, [selected, board, setBoard]);
@@ -64,12 +87,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, setBoard }) => {
         <div className="w-[425px] h-[5px] absolute bg-black bottom-[137.5px] left-[0px]" />
       </div>
       <div className="flex gap-2 text-col-2 absolute top-3 right-3">
-        {[...Array(lifes)].map((_, idx) => (
-          <Favorite key={idx} className="text-red-400" />
-        ))}
-        {[...Array(4 - lifes)].map((_, idx) => (
-          <Favorite key={idx} />
-        ))}
+        {/* {showLives()} */}
       </div>
     </div>
   );
