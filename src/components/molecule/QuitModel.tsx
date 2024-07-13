@@ -17,7 +17,7 @@ const QuitModel: React.FC<QuitModelProps> = ({ show, setModel }) => {
   };
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center absolute top-0 left-0 bg-slate-800 opacity-80">
+    <div className="w-screen h-screen flex justify-center items-center absolute top-0 left-0 bg-slate-800 opacity-90">
       <div className="text-blue-50 font-bold flex flex-col items-center gap-5">
         <div className="text-xl">Want to Quit this game?</div>
         <div className="flex gap-6">

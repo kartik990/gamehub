@@ -1,5 +1,7 @@
+import QuitModel from "@/components/molecule/QuitModel";
 import { chessEvents } from "@/constants/chessEvents";
 import { MessageType } from "@/types/chess";
+import { Home, LogoutOutlined } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 
@@ -10,6 +12,7 @@ interface MessengerProps {
 const Messenger: React.FC<MessengerProps> = ({ socket }) => {
   const [msg, setMsg] = useState("");
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [quitModel, setQuitModel] = useState(false);
 
   const handleSend = () => {
     socket?.emit(chessEvents.ChatToServer, {

@@ -6,29 +6,28 @@ import useSocket from "@/hooks/useSocket";
 import { ChessContext } from "@/context/chess";
 import { chessEvents } from "@/constants/chessEvents";
 import { toast } from "react-toastify";
+import Menu from "./Menu";
+import { LogoutOutlined } from "@mui/icons-material";
+import QuitModel from "../molecule/QuitModel";
 
 interface ChessGameWrapperProps {}
 
 const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
   const { socket } = useSocket();
   const [showModel, setShowModel] = useState<boolean>(true);
-  const ref = useRef(0);
+  const [quitModel, setQuitModel] = useState(false);
 
   const {
     state: { myCol },
     dispatch,
   } = useContext(ChessContext);
 
-  const handleClick = () => {
-    socket?.emit(chessEvents.INIT_GAME);
-    setShowModel(false);
-  };
-
   useEffect(() => {
     if (!socket) return;
 
     socket.on(chessEvents.NEW_GAME, (gameId, board, color) => {
       dispatch({ type: "newGame", payload: { gameId, board, col: color } });
+      setShowModel(false);
     });
 
     socket.on(
@@ -44,8 +43,6 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
     socket.on(
       chessEvents.WARNING_MSG,
       (message: string, fr: "w" | "b" | "both") => {
-        console.log(fr);
-
         if (fr == myCol || fr == "both") {
           toast.warn(message);
         }
@@ -65,20 +62,21 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-col-4">
       <div className="w-auto h-auto flex gap-1">
-        {showModel && (
-          <div className="w-screen h-screen flex justify-center items-center bg-slate-500 opacity-85 absolute top-0 left-0 z-10">
-            <button
-              className="w-36 h-16 bg-white text-lg text-col-4 rounded"
-              onClick={handleClick}
-            >
-              New Game
-            </button>
+        <div className="absolute top-0 right-0 cursor-pointer bg-slate-200 px-4 py-2 flex justify-between">
+          <div
+            onClick={() => {
+              setQuitModel(true);
+            }}
+          >
+            Quit <LogoutOutlined />
           </div>
-        )}
+        </div>
+        {showModel && <Menu socket={socket} setShowModel={setShowModel} />}
         <ChessBoard socket={socket} />
         <MiddleSection />
         <Messenger socket={socket} />
       </div>
+      <QuitModel show={quitModel} setModel={setQuitModel} />
     </div>
   );
 };

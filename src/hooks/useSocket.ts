@@ -7,9 +7,11 @@ const useSocket = () => {
 
   useEffect(() => {
     if (!socket) {
-      const skt = io("http://localhost:8080");
+      const skt = io(process.env.server || "http://localhost:8080");
       setSocket(skt);
     }
+
+    console.log(socket);
   }, [socket]);
 
   return {

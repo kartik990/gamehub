@@ -8,8 +8,6 @@ import snake from "@/assets/snake.png";
 export default function Home() {
   const [hover, setHover] = useState("");
 
-  console.log(hover);
-
   return (
     <div className="w-screen h-screen flex flex-col items-center bg-col-4 gap-20 ">
       <div className="text-7xl from-neutral-600 font-extrabold text-slate-200 mt-24">
