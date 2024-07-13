@@ -7,7 +7,7 @@ const useSocket = () => {
 
   useEffect(() => {
     if (!socket) {
-      const skt = io(process.env.server || "http://localhost:8080");
+      const skt = io("https://gamehub-server.onrender.com");
       setSocket(skt);
     }
 
