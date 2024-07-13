@@ -1,13 +1,13 @@
 import React from "react";
 
 const Cell = ({
-  value = "",
+  value,
   handleSelect,
   r,
   c,
   selected,
 }: {
-  value?: string;
+  value?: number;
   handleSelect: () => void;
   r?: number;
   c?: number;
@@ -17,7 +17,7 @@ const Cell = ({
     <div
       className={`w-10 h-10 bg-col-2 border-col-4 rounded-sm font-bold flex justify-center items-center text-xl hover:border-4 ${
         selected?.r === r && selected?.c == c ? "border-4" : ""
-      } ${value != "0" ? "hover:border-0 cursor-default" : "cursor-pointer"}`}
+      } ${value ? "hover:border-0 cursor-default" : "cursor-pointer"}`}
       onClick={handleSelect}
     >
       {value ? value : ""}

@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from "react";
 import TimerIcon from "@mui/icons-material/Timer";
 
-const Timer = () => {
-  const [time, setTime] = useState({ min: 0, sec: 0 });
+interface props {
+  winner: boolean;
+  time: {
+    min: number;
+    sec: number;
+  };
+  setTime: React.Dispatch<
+    React.SetStateAction<{
+      min: number;
+      sec: number;
+    }>
+  >;
+}
 
+const Timer = ({ winner, time, setTime }: props) => {
   useEffect(() => {
+    if (winner) return;
+
     const timer = setInterval(() => {
       let s = time.sec + 1;
       if (s == 60) {
@@ -15,7 +29,7 @@ const Timer = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [time]);
+  }, [time, winner, setTime]);
 
   return (
     <div className="flex flex-col justify-center items-center gap-4">

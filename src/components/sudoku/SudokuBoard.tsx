@@ -1,28 +1,38 @@
 import React, { useEffect, useState } from "react";
 import Cell from "./cell";
 import { deepCopy } from "@/utils";
-import Line from "./Line";
 import { Favorite, FavoriteRounded } from "@mui/icons-material";
-import { isSafe } from "@/utils/sudoku";
-import { toast } from "react-toastify";
 
 interface SudokuProps {
-  board: string[][];
-  solution: string[][];
-  setBoard: React.Dispatch<React.SetStateAction<string[][] | null>>;
+  board: number[][];
+  solution: number[][];
+  setBoard: React.Dispatch<React.SetStateAction<number[][] | null>>;
+  lives: number;
+  setLives: React.Dispatch<React.SetStateAction<number>>;
+  selected: {
+    r: number;
+    c: number;
+  } | null;
+  setSelected: React.Dispatch<
+    React.SetStateAction<{
+      r: number;
+      c: number;
+    } | null>
+  >;
 }
 
-const SudokuBoard: React.FC<SudokuProps> = ({ board, solution, setBoard }) => {
-  const [selected, setSelected] = useState<{ r: number; c: number } | null>(
-    null
-  );
-
-  const [lives, setLives] = useState<number>(4);
-
+const SudokuBoard: React.FC<SudokuProps> = ({
+  board,
+  solution,
+  setBoard,
+  lives,
+  setLives,
+  selected,
+  setSelected,
+}) => {
   const handleSelect = (r: number, c: number) => {
     if (board[r][c]) return;
 
-    console.log({ r, c });
     setSelected({ r, c });
   };
 
@@ -39,15 +49,13 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, solution, setBoard }) => {
       const val = e.key;
       const { r, c } = selected;
 
-      console.log(e);
-
       if (solution[r][c] == val) {
-        const newBoard = deepCopy(board) as string[][];
-        newBoard[r][c] = val;
+        const newBoard = deepCopy(board) as number[][];
+        newBoard[r][c] = +val;
         setBoard(newBoard);
+        setSelected(null);
       } else {
         setLives((prev) => prev - 1);
-        toast.warn("Invalid Entry");
       }
     };
 
@@ -55,7 +63,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, solution, setBoard }) => {
     return () => {
       window.removeEventListener("keydown", handler);
     };
-  }, [selected, board, solution, setBoard]);
+  }, [selected, board, solution, setBoard, setLives, setSelected]);
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full relative">
@@ -86,7 +94,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({ board, solution, setBoard }) => {
         {[...Array(4)].map((_, idx) => (
           <Favorite
             key={idx}
-            className={`${idx <= lives ? "text-red-400" : ""}`}
+            className={`${idx < lives ? "text-red-400" : ""}`}
           />
         ))}
       </div>
