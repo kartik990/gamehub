@@ -103,7 +103,7 @@ const Sudoku = () => {
     <div className="flex items-center justify-center w-screen h-screen bg-col-4">
       <div className="w-[100%] h-[80%] flex justify-between flex-col md:flex-row md:w-[80%] ">
         <div
-          className={`w-[68%] bg-col-1 flex justify-center items-center relative ${
+          className={`w-[65%] bg-col-1 flex flex-col justify-center items-center relative ${
             winner ? "border-8 border-green-600" : ""
           }`}
         >
@@ -122,7 +122,7 @@ const Sudoku = () => {
           )}
 
           {!winner && (
-            <div className="absolute bottom-2 w-[420px] h-12 flex justify-between items-center">
+            <div className="w-[420px] h-12 flex justify-between items-center absolute bottom-4">
               {[...Array(9)].map((_, i) => (
                 <div
                   key={i}
@@ -138,7 +138,7 @@ const Sudoku = () => {
           )}
         </div>
 
-        <div className="w-[30%] p-5 bg-col-2 flex flex-col justify-between">
+        <div className="w-[40%] p-5 bg-col-2 flex flex-col justify-between">
           <Timer winner={winner} time={time} setTime={setTime} />
           <div>
             {`A 9 x 9 square must be filled in with numbers from 1-9 with no

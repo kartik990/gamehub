@@ -70,7 +70,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({
       <div className="absolute top-0 left-0 translate-x-[-25%] translate-y-[-30%] rotate-[-20deg]  px-10 py-5 bg-col-3 text-white font-bold text-lg tracking-widest">
         Sudoku
       </div>
-      <div className="grid grid-rows-9 grid-cols-9 gap-2 relative">
+      <div className="grid grid-rows-9 grid-cols-9 gap-2 relative translate-y-[-25px]">
         {board.map((row, r) => {
           return row.map((val, c) => (
             <>
@@ -85,10 +85,10 @@ const SudokuBoard: React.FC<SudokuProps> = ({
             </>
           ));
         })}
-        <div className="w-[5px] h-[425px] absolute bg-black top-[0px] left-[137.5px]" />
-        <div className="w-[5px] h-[425px] absolute bg-black top-[0px] right-[137.5px]" />
-        <div className="w-[425px] h-[5px] absolute bg-black top-[137.5px] left-[0px]" />
-        <div className="w-[425px] h-[5px] absolute bg-black bottom-[137.5px] left-[0px]" />
+        <div className="w-[5px] h-[352px] absolute bg-black top-[0px] left-[113.5px]" />
+        <div className="w-[5px] h-[352px] absolute bg-black top-[0px] right-[113.5px]" />
+        <div className="w-[352px] h-[5px] absolute bg-black top-[113.5px] left-[0px]" />
+        <div className="w-[352px] h-[5px] absolute bg-black bottom-[113.5px] left-[0px]" />
       </div>
       <div className="flex gap-2 text-col-2 absolute top-3 right-3">
         {[...Array(4)].map((_, idx) => (
