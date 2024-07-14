@@ -1,7 +1,5 @@
-import QuitModel from "@/components/molecule/QuitModel";
 import { chessEvents } from "@/constants/chessEvents";
 import { MessageType } from "@/types/chess";
-import { Home, LogoutOutlined } from "@mui/icons-material";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 

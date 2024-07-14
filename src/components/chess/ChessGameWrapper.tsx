@@ -9,16 +9,23 @@ import { toast } from "react-toastify";
 import Menu from "./Menu";
 import { LogoutOutlined } from "@mui/icons-material";
 import QuitModel from "../molecule/QuitModel";
+import { GameOverReasons } from "@/types/chess";
+import GameOverScreen from "./GameOverScreen";
 
-interface ChessGameWrapperProps {}
-
-const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
+const ChessGameWrapper: React.FC = () => {
   const { socket } = useSocket();
   const [showModel, setShowModel] = useState<boolean>(true);
+  const [gameOver, setGameOver] = useState<{
+    show: boolean;
+    reason: GameOverReasons | null;
+  }>({
+    show: false,
+    reason: null,
+  });
   const [quitModel, setQuitModel] = useState(false);
 
   const {
-    state: { myCol },
+    state: { myCol, turn },
     dispatch,
   } = useContext(ChessContext);
 
@@ -32,13 +39,32 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
 
     socket.on(
       chessEvents.UPDATE_BOARD,
-      ({ board, turn, latestMove, isCheck }) => {
+      ({ board, turn, latestMove, isCheck, gameOver }) => {
         dispatch({
           type: "updateBoard",
           payload: { board, turn, latestMove, isCheck },
         });
+
+        if (gameOver.isTrue) {
+          if (gameOver.reason === "checkMate" && turn !== myCol)
+            setGameOver({ show: true, reason: GameOverReasons.CheckMateMeWon });
+          else if (gameOver.reason === "checkMate" && turn === myCol)
+            setGameOver({
+              show: true,
+              reason: GameOverReasons.CheckMateOppWon,
+            });
+          else if (gameOver.reason === "draw")
+            setGameOver({ show: true, reason: GameOverReasons.Draw });
+          else if (gameOver.reason === "stalemate") {
+            setGameOver({ show: true, reason: GameOverReasons.StaleMate });
+          }
+        }
       }
     );
+
+    socket.on(chessEvents.GAME_OVER, () => {
+      setGameOver({ show: true, reason: GameOverReasons.OpponentLeft });
+    });
 
     socket.on(
       chessEvents.WARNING_MSG,
@@ -48,15 +74,6 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
         }
       }
     );
-
-    // socket.on(
-    //   chessEvents.CRITICAL_MSG,
-    //   (message: string, fr: "w" | "b" | "both") => {
-    //     if(message=="check-mate"){
-
-    //     }
-    //   }
-    // );
   }, [socket, dispatch, myCol]);
 
   return (
@@ -73,10 +90,11 @@ const ChessGameWrapper: React.FC<ChessGameWrapperProps> = () => {
         </div>
         {showModel && <Menu socket={socket} setShowModel={setShowModel} />}
         <ChessBoard socket={socket} />
-        <MiddleSection />
+        <MiddleSection setGameOver={setGameOver} />
         <Messenger socket={socket} />
       </div>
       <QuitModel show={quitModel} setModel={setQuitModel} />
+      {gameOver.show && <GameOverScreen reason={gameOver.reason} />}
     </div>
   );
 };

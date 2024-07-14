@@ -13,3 +13,13 @@ export type MessageType = {
 };
 
 export type MoveType = { from: string; to: string; col: string; piece: string };
+
+export enum GameOverReasons {
+  MyTimeUp,
+  OpponentTimeUp,
+  CheckMateMeWon,
+  CheckMateOppWon,
+  StaleMate,
+  Draw,
+  OpponentLeft,
+}

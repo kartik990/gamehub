@@ -2,12 +2,20 @@ import { ChessContext } from "@/context/chess";
 import React, { useContext, useEffect, useState } from "react";
 import { getPiece } from "../ChessBoard/Cell";
 import Image from "next/image";
+import { GameOverReasons } from "@/types/chess";
 
-interface MiddleSectionProps {}
+interface MiddleSectionProps {
+  setGameOver: React.Dispatch<
+    React.SetStateAction<{
+      show: boolean;
+      reason: GameOverReasons | null;
+    }>
+  >;
+}
 
-const MiddleSection: React.FC<MiddleSectionProps> = () => {
-  const [myTime, setMyTime] = useState({ min: 10, sec: 0 });
-  const [opponentTime, setOpponentTime] = useState({ min: 10, sec: 0 });
+const MiddleSection: React.FC<MiddleSectionProps> = ({ setGameOver }) => {
+  const [myTime, setMyTime] = useState({ min: 20, sec: 10 });
+  const [opponentTime, setOpponentTime] = useState({ min: 20, sec: 10 });
 
   const {
     state: { turn, myCol, moves },
@@ -18,15 +26,23 @@ const MiddleSection: React.FC<MiddleSectionProps> = () => {
     const timer = setInterval(() => {
       if (turn == myCol) {
         let s = myTime.sec - 1;
-        if (s == -1) {
-          setMyTime({ min: myTime.min - 1, sec: 59 });
+        if (s < 0) {
+          if (myTime.min === 0) {
+            setGameOver({ show: true, reason: GameOverReasons.MyTimeUp });
+          } else {
+            setMyTime({ min: myTime.min - 1, sec: 59 });
+          }
         } else {
           setMyTime({ ...myTime, sec: s });
         }
       } else {
         let s = opponentTime.sec - 1;
-        if (s == -1) {
-          setOpponentTime({ min: opponentTime.min - 1, sec: 59 });
+        if (s < 0) {
+          if (opponentTime.min === 0) {
+            setGameOver({ show: true, reason: GameOverReasons.OpponentTimeUp });
+          } else {
+            setOpponentTime({ min: opponentTime.min - 1, sec: 59 });
+          }
         } else {
           setOpponentTime({ ...opponentTime, sec: s });
         }
@@ -34,7 +50,7 @@ const MiddleSection: React.FC<MiddleSectionProps> = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [myTime, opponentTime, myCol, turn]);
+  }, [myTime, opponentTime, myCol, turn, setGameOver]);
 
   return (
     <div className="w-[200px] h-[480px] flex flex-col justify-between ">

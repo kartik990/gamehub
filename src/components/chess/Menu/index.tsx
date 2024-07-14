@@ -49,7 +49,7 @@ const Menu: React.FC<MenuProps> = ({ socket, setShowModel }) => {
   useEffect(() => {
     if (socket) {
       socket.on(chessEvents.ROOM_ERROR, (msg) => {
-        console.log(msg);
+        toast.warn("invalid room id");
       });
     }
   }, [socket]);
