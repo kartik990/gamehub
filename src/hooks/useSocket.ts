@@ -16,7 +16,9 @@ const useSocket = () => {
       setSocket(skt);
     }
 
-    console.log(socket);
+    return () => {
+      socket?.disconnect();
+    };
   }, [socket]);
 
   return {
