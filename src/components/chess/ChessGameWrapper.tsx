@@ -77,7 +77,7 @@ const ChessGameWrapper: React.FC = () => {
   }, [socket, dispatch, myCol]);
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-col-4">
+    <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-b from-col-4 via-col-4 to-col-3">
       <div className="w-auto h-auto flex gap-1">
         <div className="absolute top-0 right-0 cursor-pointer bg-slate-200 px-4 py-2 flex justify-between">
           <div

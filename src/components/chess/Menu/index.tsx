@@ -55,7 +55,7 @@ const Menu: React.FC<MenuProps> = ({ socket, setShowModel }) => {
   }, [socket]);
 
   return (
-    <div className="w-screen h-screen flex justify-center items-center bg-col-4 absolute top-0 left-0 z-10 ">
+    <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-b from-col-4 via-col-4 to-col-1 absolute top-0 left-0 z-10 ">
       <div className="flex justify-between gap-10 w-full max-w-[80%]">
         <Image src={chess} alt="chess" className="w-[350px] h-[350px]" />
         <div className="relative">

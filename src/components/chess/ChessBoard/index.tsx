@@ -55,12 +55,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({ socket }) => {
           selectedPiece.current.type == "p" &&
           selectedPiece.current.col == "b")
       ) {
-        console.log("in my");
         setShowPromotion(true);
         setMove((prev) => ({ ...prev, to: pos, promotion: "hold" }));
         selectedPiece.current = { type: undefined, col: undefined };
       } else {
-        console.log("in normal");
         setMove((prev) => ({ ...prev, to: pos }));
       }
     }

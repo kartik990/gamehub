@@ -115,14 +115,12 @@ const SnakeGame: React.FC = () => {
           setPoint((prev) => prev + 1);
         }
 
+        for (let i = snake.length - 1; i > 0; i--) {
+          snake[i] = { x: snake[i - 1].x, y: snake[i - 1].y };
+        }
+
         snake[0].x = snake[0].x + dx;
         snake[0].y = snake[0].y + dy;
-
-        if (snake.length > 1) {
-          for (let i = snake.length - 1; i > 0; i--) {
-            snake[i] = { x: snake[i - 1].x, y: snake[i - 1].y };
-          }
-        }
 
         context.fillStyle = "#4D4C7D";
         snake.forEach((segment) => {
@@ -139,6 +137,8 @@ const SnakeGame: React.FC = () => {
     renderAnimation();
 
     const handleKeyDown = (event: any) => {
+      if (gameOver) return;
+
       switch (event.code) {
         case "ArrowUp":
           if (pause.current) {
@@ -217,7 +217,7 @@ const SnakeGame: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen  flex gap-5 justify-center items-center bg-col-4">
+    <div className="w-screen h-screen  flex gap-5 justify-center items-center bg-gradient-to-b from-col-4 via-col-4 to-col-1">
       <div>
         <div className="font-bold text-3xl text-white mb-4">
           Welcome to The Snake Game

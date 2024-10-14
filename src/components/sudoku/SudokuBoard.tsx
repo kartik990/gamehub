@@ -67,7 +67,7 @@ const SudokuBoard: React.FC<SudokuProps> = ({
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full relative">
-      <div className="absolute top-0 left-0 translate-x-[-25%] translate-y-[-30%] rotate-[-20deg]  px-10 py-5 bg-col-3 text-white font-bold text-lg tracking-widest">
+      <div className="absolute top-2 left-0 translate-x-[-25%] translate-y-[-30%] rotate-[-20deg]  px-10 py-5 bg-col-3 text-white font-bold text-lg tracking-widest">
         Sudoku
       </div>
       <div className="grid grid-rows-9 grid-cols-9 gap-2 relative translate-y-[-25px]">

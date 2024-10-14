@@ -32,7 +32,6 @@ const Sudoku = () => {
         "https://sudoku-api.vercel.app/api/dosuku?query={newboard(limit:1){grids{value,solution,difficulty},results,message}}"
       );
       const data = await res.json();
-      console.log(data);
       const fetchedBoard = data.newboard.grids[0].value;
       const solvedBoard = data.newboard.grids[0].solution;
       if (res.ok) {
@@ -100,8 +99,8 @@ const Sudoku = () => {
   }, [lives]);
 
   return (
-    <div className="flex items-center justify-center w-screen h-screen bg-col-4">
-      <div className="w-[100%] h-[80%] flex justify-between flex-col md:flex-row md:w-[80%] ">
+    <div className="flex items-center justify-center w-screen h-screen bg-gradient-to-b from-col-4 via-col-3 to-col-4">
+      <div className="w-[100%] h-[85%] flex justify-between flex-col md:flex-row md:w-[80%] ">
         <div
           className={`w-[65%] bg-col-1 flex flex-col justify-center items-center relative ${
             winner ? "border-8 border-green-600" : ""
