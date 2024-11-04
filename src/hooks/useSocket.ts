@@ -9,7 +9,7 @@ const useSocket = () => {
     if (!socket) {
       let skt;
       if (process.env.NODE_ENV === "production") {
-        skt = io("https://gamehub-server.onrender.com");
+        skt = io("https://gamehub-server-h635.onrender.com");
       } else {
         skt = io("http://localhost:8080/");
       }
